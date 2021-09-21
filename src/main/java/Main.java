@@ -26,6 +26,7 @@ public class Main{
         post("/user/changepassword","application/json",UserController.changePassword);
         post("/user/update","application/json",UserController.updateUserAccountDetails);
         get("/user/:username/passwordhint","application/json",UserController.getUserPasswordHint);
+
         // TEAM ROUTES
         post("/team/create","application/json",TeamController.createTeam);
         post("/team/member/add","application/json",TeamController.addTeamMember);

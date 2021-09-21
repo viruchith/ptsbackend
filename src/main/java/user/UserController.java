@@ -118,6 +118,12 @@ public class UserController {
         }
     };
 
+    //TODO FETCH PUBLIC USER DETAILS FOR AUTHENTICATED USERS
+    /*public static Route getUserData = (Request req,Response res)->{
+        res.type("application/json");
+
+    };*/
+
     public static Route verifyUserToken =  (Request req, Response res)->{
         res.type("application/json");
 
@@ -136,7 +142,18 @@ public class UserController {
             return new ResponseObject(false,"Invalid Token !");
         }
 
-        return new ResponseObject(true,"Token verified successfully !");
+        User user = User.getFirstById(tokenData.getInt("id"));
+
+        //remove password
+        JSONObject userJsonObj = user.getUserObj();
+        userJsonObj.remove("password");
+
+        if(user==null){
+            return new ResponseObject(false, "User does not exist !");
+        }else{
+            return new ResponseObject(true,"Token Verified Successfully !",new JSONObject().put("user", userJsonObj));
+        }
+
     };
 
     public static Route changePassword = (Request req,Response res)->{
@@ -152,12 +169,9 @@ public class UserController {
 
         tokenData = Authenticator.verifyToken(token);
 
-
         if(tokenData==null){
             return new ResponseObject(false,"Invalid Token !");
         }
-
-
 
         try{
             resetData = new JSONObject(req.body());
