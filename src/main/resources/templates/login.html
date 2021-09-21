@@ -1,0 +1,30 @@
+<form method="post" action="/user/login" id="login-form">
+    <label>
+        Username :
+    </label>
+    <input name="username" required />
+    <label>
+        Password :
+    </label>
+    <input name = "password" required/>
+    <button type="submit">Log In</button>
+</form>
+<script>
+    const loginForm = document.getElementById("login-form");
+    loginForm.addEventListener("submit",async (e)=>{
+        e.preventDefault();
+        const formData = new FormData(loginForm);
+        const loginData = {
+        username:formData.get("username"),
+        password:formData.get("password")
+        };
+
+        const res = await fetch("/app/login",{
+            method:"POST",
+            body:JSON.stringify(loginData)
+        });
+
+        console.log(await res.json());
+
+    });
+</script>

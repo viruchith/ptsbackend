@@ -1,0 +1,7 @@
+// user create
+
+http POST localhost:4567/user/create username=surya name=surya email=surya@gmail.com password=Surya@1234 password_hint=cat
+
+//user login
+
+http POST localhost:4567/user/login username=surya password=Surya@1234
