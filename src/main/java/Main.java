@@ -24,8 +24,9 @@ public class Main{
         post("/user/login","application/json",UserController.loginUser);
         get("/user/token/verify","application/json",UserController.verifyUserToken);
         post("/user/changepassword","application/json",UserController.changePassword);
-        post("/user/update","application/json",UserController.updateUserAccountDetails);
-        get("/user/:username/passwordhint","application/json",UserController.getUserPasswordHint);
+        post("/user/update", "application/json", UserController.updateUserAccountDetails);
+        get("/user/:username/info", UserController.getPublicUserInfo);
+        get("/user/:username/passwordhint", "application/json", UserController.getUserPasswordHint);
 
         // TEAM ROUTES
         post("/team/create","application/json",TeamController.createTeam);

@@ -118,11 +118,40 @@ public class UserController {
         }
     };
 
-    //TODO FETCH PUBLIC USER DETAILS FOR AUTHENTICATED USERS
-    /*public static Route getUserData = (Request req,Response res)->{
+    public static Route getPublicUserInfo = (Request req, Response res) -> {
         res.type("application/json");
+        JSONObject tokenData;
 
-    };*/
+        String token = req.headers("Auth-Token");
+        String username = req.params("username");
+
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+
+        User user = User.getFirstByUsername(username);
+
+        if (user == null) {
+            return new ResponseObject(false, "\"" + username + "\" does not exist !");
+        } else {
+            JSONObject userObj = user.getUserObj();
+            userObj.remove("password");
+            userObj.remove("password_hint");
+            userObj.remove("email");
+            userObj.remove("id");
+
+            return new ResponseObject(true, "", new JSONObject().put("user", userObj));
+        }
+
+
+    };
 
     public static Route verifyUserToken =  (Request req, Response res)->{
         res.type("application/json");
