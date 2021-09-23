@@ -1,12 +1,15 @@
 package user;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 import helpers.PasswordHasher;
 import appexceptions.ObjectAlreadyExistsException;
 import helpers.DBQueryHelper;
+import team.Team;
 
 public class User {
     private int id;
@@ -150,21 +153,39 @@ public class User {
             e.printStackTrace();
             return false;
         }catch(SQLIntegrityConstraintViolationException e){
+            //TODO Email constraint violation
             System.out.println(e.getMessage());
             throw new ObjectAlreadyExistsException("Username \""+username+"\" already taken !");
         }
         catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
 
     }
 
-    public boolean updateAccountDetails(String username,String name,String email) throws ObjectAlreadyExistsException{
-        return User.updateAccountDetails(this.id,username,name,email);
+    public boolean updateAccountDetails(String username, String name, String email) throws ObjectAlreadyExistsException {
+        return User.updateAccountDetails(this.id, username, name, email);
+    }
+
+    public static JSONArray getTeams(int user_id) {
+        try {
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT `pts`.`teams`.id,`pts`.`teams`.owner_id,`pts`.`teams`.title,`pts`.`teams`.created_at,`pts`.`users`.username AS owner_username, `pts`.`users`.name AS owner_name FROM `pts`.`teams` INNER JOIN `pts`.`users` ON `pts`.`users`.id = `pts`.`teams`.owner_id  WHERE `pts`.`teams`.id IN ( SELECT team_id FROM `pts`.`team_members` WHERE user_id =  ?  ) ORDER BY created_at DESC");
+            stmt.setInt(1, user_id);
+            ResultSet rs = stmt.executeQuery();
+            JSONArray teams = new JSONArray();
+            while (rs.next()) {
+                teams.put(new JSONObject().put("id", rs.getInt("id")).put("owner", new JSONObject().put("id", rs.getInt("owner_id")).put("username", rs.getString("owner_username")).put("name", rs.getString("owner_name"))).put("title", rs.getString("title")).put("created_at", rs.getString("created_at")));
+            }
+            return teams;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

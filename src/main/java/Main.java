@@ -18,15 +18,41 @@ public class Main{
         // GENERATE TABLES
         TableGenerator.run();
 
+        //CORS ENABLE
+        options("/*",
+                (request, response) -> {
+
+                    String accessControlRequestHeaders = request
+                            .headers("Access-Control-Request-Headers");
+                    if (accessControlRequestHeaders != null) {
+                        response.header("Access-Control-Allow-Headers",
+                                accessControlRequestHeaders);
+                    }
+
+                    String accessControlRequestMethod = request
+                            .headers("Access-Control-Request-Method");
+                    if (accessControlRequestMethod != null) {
+                        response.header("Access-Control-Allow-Methods",
+                                accessControlRequestMethod);
+                    }
+
+                    return "OK";
+                });
+
+        before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
+
+        before("/app/auth/*", AuthMiddleware.handle);//WEB APP AUTH MIDDLEWARE ( PROTECTED ROUTES )
+
 
         // USER ROUTES
-        post("/user/create","application/json",UserController.createUser);
-        post("/user/login","application/json",UserController.loginUser);
-        get("/user/token/verify","application/json",UserController.verifyUserToken);
-        post("/user/changepassword","application/json",UserController.changePassword);
+        post("/user/create", "application/json", UserController.createUser);
+        post("/user/login", "application/json", UserController.loginUser);
+        get("/user/token/verify", "application/json", UserController.verifyUserToken);
+        post("/user/changepassword", "application/json", UserController.changePassword);
         post("/user/update", "application/json", UserController.updateUserAccountDetails);
         get("/user/:username/info", UserController.getPublicUserInfo);
         get("/user/:username/passwordhint", "application/json", UserController.getUserPasswordHint);
+        get("/user/teams", UserController.getUserTeamsInfo);
 
         // TEAM ROUTES
         post("/team/create","application/json",TeamController.createTeam);
@@ -38,7 +64,6 @@ public class Main{
         get("/app/login", UserWebController.getLoginPage);
         post("/app/login","application/json",UserWebController.loginUser);
 
-        before("/app/auth/*", AuthMiddleware.handle);//AUTH MIDDLEWARE ( PROTECTED ROUTES )
 
         get("/app/auth/dashboard", UserWebController.getDashboardPage);
 

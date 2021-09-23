@@ -9,7 +9,9 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 import appexceptions.ObjectAlreadyExistsException;
+import team.Team;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UserController {
@@ -323,12 +325,34 @@ public class UserController {
 
         User user = User.getFirstByUsername(username);
 
-        if(user == null){
-            return new ResponseObject(false,"User does not exist !");
-        }else{
-            return new ResponseObject(true,new JSONObject().put("password_hint",user.getPassword_hint()));
+        if (user == null) {
+            return new ResponseObject(false, "User does not exist !");
+        } else {
+            return new ResponseObject(true, new JSONObject().put("password_hint", user.getPassword_hint()));
         }
 
+    };
+
+    public static Route getUserTeamsInfo = (Request req, Response res) -> {
+        res.type("application/json");
+
+        JSONObject tokenData;
+
+        String token = req.headers("Auth-Token");
+
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+
+        JSONArray teams = User.getTeams(tokenData.getInt("id"));
+
+        return new ResponseObject(true, "Request Successful !", new JSONObject().put("teams", teams));
     };
 
 

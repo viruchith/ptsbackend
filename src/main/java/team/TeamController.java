@@ -56,10 +56,12 @@ public class TeamController {
 
         if(Team.create(tokenData.getInt("id"),title.getValue())){
             Team team = Team.getLastCreatedTeamOfUser(tokenData.getInt("id"));
-            if(team==null){
-                return new ResponseObject(true,"Created Successfully !");
-            }else{
-                return new ResponseObject(true,new JSONObject().put("message","Created Successfully !").put("team",team.getJsonObject()));
+            //ADD OWNER as team member after creation of team
+            TeamMember.add(team.getId(), team.getOwner_id());
+            if (team == null) {
+                return new ResponseObject(true, "Created Successfully !");
+            } else {
+                return new ResponseObject(true, new JSONObject().put("message", "Created Successfully !").put("team", team.getJsonObject()));
             }
         }else{
             return new ResponseObject(false,"Unable to create team !");
