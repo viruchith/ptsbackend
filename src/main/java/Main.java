@@ -1,5 +1,6 @@
 import static spark.Spark.*;
 
+import team.Team;
 import team.TeamController;
 import user.UserController;
 import helpers.TableGenerator;
@@ -55,14 +56,14 @@ public class Main{
         get("/user/teams", UserController.getUserTeamsInfo);
 
         // TEAM ROUTES
-        post("/team/create","application/json",TeamController.createTeam);
-        post("/team/member/add","application/json",TeamController.addTeamMember);
-        delete("/team/:team_id/member/:member_id/delete","application/json",TeamController.removeTeamMember);
-
+        post("/team/create", "application/json", TeamController.createTeam);
+        post("/team/member/add", "application/json", TeamController.addTeamMember);
+        delete("/team/:team_id/member/:member_id/delete", "application/json", TeamController.removeTeamMember);
+        get("/team/:team_id/member/all", "application/json", TeamController.getTeamMembers);
         //WEB APP ROUTES
         get("/", IndexWebController.indexPageHandler);//WEB INDEX
         get("/app/login", UserWebController.getLoginPage);
-        post("/app/login","application/json",UserWebController.loginUser);
+        post("/app/login", "application/json", UserWebController.loginUser);
 
 
         get("/app/auth/dashboard", UserWebController.getDashboardPage);

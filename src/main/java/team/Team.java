@@ -3,6 +3,7 @@ package team;
 import java.sql.*;
 
 import helpers.DBQueryHelper;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Team {
@@ -91,18 +92,36 @@ public class Team {
     public static Team getTeamById(int team_id){
         try{
             PreparedStatement statement = DBQueryHelper.getPreparedStatement("SELECT * FROM `pts`.`teams` WHERE `id` =  ?");
-            statement.setInt(1,team_id);
+            statement.setInt(1, team_id);
             ResultSet rs = statement.executeQuery();
-            if(rs.next()){
-                int id = rs.getInt("id") , owner_id = rs.getInt("owner_id");
-                String title = rs.getString("title") , created_at = rs.getString("created_at");
-                return new Team(id,owner_id,title,created_at);
-            }else{
+            if (rs.next()) {
+                int id = rs.getInt("id"), owner_id = rs.getInt("owner_id");
+                String title = rs.getString("title"), created_at = rs.getString("created_at");
+                statement.close();
+                return new Team(id, owner_id, title, created_at);
+            } else {
                 return null;
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static JSONArray getMembers(int team_id) {
+        JSONArray members = new JSONArray();
+
+        try {
+            PreparedStatement statement = DBQueryHelper.getPreparedStatement("SELECT `pts`.`users`.id,`pts`.`users`.username, `pts`.`users`.name FROM `pts`.`users` INNER JOIN `pts`.`team_members` ON `pts`.`users`.id = `pts`.`team_members`.user_id  WHERE team_members.team_id = ?");
+            statement.setInt(1, team_id);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                members.put(new JSONObject().put("id", rs.getInt("id")).put("username", rs.getString("username")).put("name", rs.getString("name")));
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return members;
     }
 }

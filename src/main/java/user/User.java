@@ -180,12 +180,28 @@ public class User {
             while (rs.next()) {
                 teams.put(new JSONObject().put("id", rs.getInt("id")).put("owner", new JSONObject().put("id", rs.getInt("owner_id")).put("username", rs.getString("owner_username")).put("name", rs.getString("owner_name"))).put("title", rs.getString("title")).put("created_at", rs.getString("created_at")));
             }
+            stmt.close();
             return teams;
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean isMemberOfTeam(int team_id, int user_id) {
+        try {
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT * FROM pts.team_members WHERE team_id = ? AND user_id = ?");
+            stmt.setInt(1, team_id);
+            stmt.setInt(2, user_id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
