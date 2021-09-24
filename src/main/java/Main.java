@@ -60,6 +60,7 @@ public class Main{
         post("/team/member/add", "application/json", TeamController.addTeamMember);
         delete("/team/:team_id/member/:member_id/delete", "application/json", TeamController.removeTeamMember);
         get("/team/:team_id/member/all", "application/json", TeamController.getTeamMembers);
+        get("/team/:team_id/info", TeamController.getTeamInfo);
         //WEB APP ROUTES
         get("/", IndexWebController.indexPageHandler);//WEB INDEX
         get("/app/login", UserWebController.getLoginPage);

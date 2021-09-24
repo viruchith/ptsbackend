@@ -124,4 +124,20 @@ public class Team {
         }
         return members;
     }
+
+    public static JSONObject getInfo(int team_id) {
+        JSONObject team_info = new JSONObject();
+        try {
+            PreparedStatement statement = DBQueryHelper.getPreparedStatement("SELECT `pts`.`teams`.id,`pts`.`teams`.owner_id,`pts`.`teams`.title,`pts`.`teams`.created_at,`pts`.`users`.username AS owner_username, `pts`.`users`.name AS owner_name FROM `pts`.`teams` INNER JOIN `pts`.`users` ON `pts`.`users`.id = `pts`.`teams`.owner_id  WHERE `pts`.`teams`.id = ? ORDER BY created_at DESC LIMIT 1 ");
+            statement.setInt(1, team_id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                team_info.put("id", rs.getInt("id")).put("title", rs.getString("title")).put("create_at", rs.getString("created_at")).put("owner_id", rs.getInt("owner_id")).put("owner_username", rs.getString("owner_username")).put("owner_name", rs.getString("owner_name"));
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return team_info;
+    }
 }

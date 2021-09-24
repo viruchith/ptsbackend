@@ -235,4 +235,35 @@ public class TeamController {
 
     };
 
+    public static Route getTeamInfo = (Request req, Response res) -> {
+        res.type("application/json");
+        JSONObject tokenData, errors;
+
+        String token = req.headers("Auth-Token");
+
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        int team_id;
+
+        try {
+            team_id = Integer.parseInt(req.params("team_id"));
+        } catch (NumberFormatException e) {
+            return new ResponseObject(false, "Invalid Team Id !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+        if (User.isMemberOfTeam(team_id, tokenData.getInt("id"))) {
+            JSONObject team_info = Team.getInfo(team_id);
+            return new ResponseObject(true, "Request successful", new JSONObject().put("team_info", team_info));
+        } else {
+            return new ResponseObject(false, "User is not a member of the team !");
+        }
+    };
+
 }
