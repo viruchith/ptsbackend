@@ -58,7 +58,7 @@ public class TeamController {
         if (Team.create(tokenData.getInt("id"), title.getValue())) {
             Team team = Team.getLastCreatedTeamOfUser(tokenData.getInt("id"));
             //ADD OWNER as team member after creation of team
-            TeamMember.add(team.getId(), team.getOwner_id());
+            TeamMember.add(team.getId(), tokenData.getString("username"));
             if (team == null) {
                 return new ResponseObject(true, "Created Successfully !");
             } else {
@@ -95,12 +95,12 @@ public class TeamController {
             return new ResponseObject(false, "Invalid Data !");
         }
 
-        if (memberData.isEmpty() || !memberData.has("team_id") || !memberData.has("member_id")) {
+        if (memberData.isEmpty() || !memberData.has("team_id") || !memberData.has("username")) {
             return new ResponseObject(false, "Missing Data !");
         }
 
         Validator team_id = new Validator(memberData.getString("team_id")).isPresent().isInt().maxLength(11);
-        Validator member_id = new Validator(memberData.getString("member_id")).isPresent().isInt().maxLength(11);
+        Validator username = new Validator(memberData.getString("username")).isPresent().minLength(5).maxLength(15).matches(Constants.User.USER_NAME_REGEX);
 
         errors = new JSONObject();
 
@@ -108,8 +108,8 @@ public class TeamController {
             errors.put("team_id", new JSONArray(team_id.getErrorMessages()));
         }
 
-        if (!member_id.isValid()) {
-            errors.put("member_id", new JSONArray(member_id.getErrorMessages()));
+        if (!username.isValid()) {
+            errors.put("member_id", new JSONArray(username.getErrorMessages()));
         }
 
         if (!errors.isEmpty()) {
@@ -128,7 +128,7 @@ public class TeamController {
         }
 
         try {
-            if (TeamMember.add(Integer.parseInt(team_id.getValue()), Integer.parseInt(member_id.getValue()))) {
+            if (TeamMember.add(Integer.parseInt(team_id.getValue()), username.getValue())) {
                 return new ResponseObject(true, "Added successfully !");
             } else {
                 return new ResponseObject(false, "Unable to add to team");

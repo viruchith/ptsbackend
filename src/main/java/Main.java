@@ -1,6 +1,5 @@
 import static spark.Spark.*;
 
-import team.Team;
 import team.TeamController;
 import user.UserController;
 import helpers.TableGenerator;

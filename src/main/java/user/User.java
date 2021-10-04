@@ -205,6 +205,22 @@ public class User {
     }
 
 
+    public static boolean isOwnerOfTeam(int team_id, int owner_id) {
+        try {
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT * FROM pts.teams WHERE id = ? AND owner_id = ?");
+            stmt.setInt(1, team_id);
+            stmt.setInt(2, owner_id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     public int getId() {
         return id;
     }

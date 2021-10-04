@@ -204,21 +204,28 @@ public class Validator{
     }
 
     public Validator isInt(String message){
-        if(!Validator.isInteger(this.value)){
+        if (!Validator.isInteger(this.value)) {
             this.errorMessages.add(message);
         }
         return this;
     }
 
-    public Validator isInt(){
+    public Validator isInt() {
         return this.isInt("Must be an Integer !");
     }
 
-    public Validator compare(String value){
-        return (this.compare(value,"Not equal !"));
+    public Validator compare(String value) {
+        return (this.compare(value, "Not equal !"));
     }
 
-    public ArrayList<String> getErrorMessages(){
+    public Validator customValidation(boolean isValid, String message) {
+        if (!isValid) {
+            this.errorMessages.add(message);
+        }
+        return this;
+    }
+
+    public ArrayList<String> getErrorMessages() {
         return this.errorMessages;
     }
 
