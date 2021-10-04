@@ -57,7 +57,7 @@ public class Main{
         // TEAM ROUTES
         post("/team/create", "application/json", TeamController.createTeam);
         post("/team/member/add", "application/json", TeamController.addTeamMember);
-        delete("/team/:team_id/member/:member_id/delete", "application/json", TeamController.removeTeamMember);
+        delete("/team/:team_id/member/:username/delete", "application/json", TeamController.removeTeamMember);
         get("/team/:team_id/member/all", "application/json", TeamController.getTeamMembers);
         get("/team/:team_id/info", TeamController.getTeamInfo);
         //WEB APP ROUTES

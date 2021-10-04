@@ -1,6 +1,5 @@
 package board;
 
-import com.sun.imageio.plugins.common.SingleTileRenderedImage;
 import org.json.JSONObject;
 
 public class List {

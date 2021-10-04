@@ -99,7 +99,7 @@ public class TeamController {
             return new ResponseObject(false, "Missing Data !");
         }
 
-        Validator team_id = new Validator(memberData.getString("team_id")).isPresent().isInt().maxLength(11);
+        Validator team_id = new Validator(Integer.toString(memberData.getInt("team_id"))).isPresent().isInt().maxLength(11);
         Validator username = new Validator(memberData.getString("username")).isPresent().minLength(5).maxLength(15).matches(Constants.User.USER_NAME_REGEX);
 
         errors = new JSONObject();
@@ -109,7 +109,7 @@ public class TeamController {
         }
 
         if (!username.isValid()) {
-            errors.put("member_id", new JSONArray(username.getErrorMessages()));
+            errors.put("username", new JSONArray(username.getErrorMessages()));
         }
 
         if (!errors.isEmpty()) {
@@ -162,12 +162,12 @@ public class TeamController {
 
         errors = new JSONObject();
 
-        Validator team_id = new Validator(req.params("team_id")).isInt(), member_id = new Validator(req.params("member_id")).isInt();
+        Validator team_id = new Validator(req.params("team_id")).isInt(), username = new Validator(req.params("username")).isPresent().minLength(5).maxLength(15).matches(Constants.User.USER_NAME_REGEX);
         if (!team_id.isValid()) {
             errors.put("team_id", new JSONArray(team_id.getErrorMessages()));
         }
-        if (!member_id.isValid()) {
-            errors.put("member_id", new JSONArray(member_id.getErrorMessages()));
+        if (!username.isValid()) {
+            errors.put("username", new JSONArray(username.getErrorMessages()));
         }
 
         if (!errors.isEmpty()) {
@@ -184,15 +184,15 @@ public class TeamController {
             return new ResponseObject(false, "Unauthorized Action !");
         }
 
-        if (team.getOwner_id() == Integer.parseInt(member_id.getValue())) {
+        if (username.equals(tokenData.getString("username"))) {
             return new ResponseObject(false, "Team Owner Cannot be deleted !");
         }
 
 
         try {
-            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("DELETE FROM `pts`.`team_members` WHERE team_id = ? AND user_id = ? ");
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("DELETE FROM `pts`.`team_members` WHERE team_id = ? AND user_id = ( SELECT `id` FROM `pts`.`users` WHERE `username` = ? LIMIT 1 ) ");
             stmt.setInt(1, Integer.parseInt(team_id.getValue()));
-            stmt.setInt(2, Integer.parseInt(member_id.getValue()));
+            stmt.setString(2, username.getValue());
             stmt.execute();
             return new ResponseObject(true, "Deleted Successfully !");
         } catch (SQLException e) {
