@@ -27,6 +27,7 @@ public class Board {
         this.title = title;
         this.description = description;
         this.created_at = created_at;
+        this.jsonObject = new JSONObject().put("team_id", team_id).put("title", title).put("description", description).put("created_at", created_at);
     }
 
     public static boolean create(int team_id, String title, String description) throws SQLIntegrityConstraintViolationException {
@@ -96,6 +97,10 @@ public class Board {
             e.printStackTrace();
         }
         return lists;
+    }
+
+    public JSONObject getJsonObject() {
+        return jsonObject;
     }
 
     @Override

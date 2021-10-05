@@ -53,7 +53,8 @@ public class Main{
         post("/user/update", "application/json", UserController.updateUserAccountDetails);
         get("/user/:username/info", UserController.getPublicUserInfo);
         get("/user/:username/passwordhint", "application/json", UserController.getUserPasswordHint);
-        get("/user/teams", UserController.getUserTeamsInfo);
+        get("/user/teams", "application/json", UserController.getUserTeamsInfo);
+        get("/user/boards", "application/json", UserController.getAllUserBoards);
 
         // TEAM ROUTES
         post("/team/create", "application/json", TeamController.createTeam);

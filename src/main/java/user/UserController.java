@@ -355,5 +355,27 @@ public class UserController {
         return new ResponseObject(true, "Request Successful !", new JSONObject().put("teams", teams));
     };
 
+    public static Route getAllUserBoards = (Request req, Response res) -> {
+        res.type("application/json");
+
+        JSONObject tokenData;
+
+        String token = req.headers("Auth-Token");
+
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+
+        JSONArray boards = User.getAllBoards(tokenData.getInt("id"));
+
+        return new ResponseObject(true, "Request successful", new JSONObject().put("boards", boards));
+    };
+
 
 }

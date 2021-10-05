@@ -1,5 +1,6 @@
 package user;
 
+import board.Board;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -220,6 +221,21 @@ public class User {
         return false;
     }
 
+
+    public static JSONArray getAllBoards(int user_id) {
+        JSONArray boards = new JSONArray();
+        try {
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT * FROM pts.boards WHERE team_id IN (SELECT team_id FROM pts.team_members WHERE user_id = ?)");
+            stmt.setInt(1, user_id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                boards.put(new Board(rs.getInt("id"), rs.getInt("team_id"), rs.getString("title"), rs.getString("description"), rs.getString("created_at")).getJsonObject());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return boards;
+    }
 
     public int getId() {
         return id;
