@@ -71,4 +71,49 @@ public class BoardController {
             return new ResponseObject(false, "User is not part of the team");
         }
     };
+
+    public static Route getBoardData = (Request req, Response res) -> {
+        res.type("application/json");
+        JSONObject tokenData, boardData, errors;
+
+        String token = req.headers("Auth-Token");
+
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+
+        Validator team_id = new Validator(req.params("team_id")).isPresent().isInt(),
+                board_id = new Validator(req.params("board_id")).isPresent().isInt();
+        errors = new JSONObject();
+
+        if (!team_id.isValid()) {
+            errors.put("team_id", new JSONArray(team_id.getErrorMessages()));
+        }
+        if (!board_id.isValid()) {
+            errors.put("board_id", new JSONArray(board_id.getErrorMessages()));
+        }
+
+        if (!errors.isEmpty()) {
+            return new ResponseObject(false, "Invalid Data !", new JSONObject().put("errors", errors));
+        }
+
+        if (User.isMemberOfTeam(team_id.getIntValue(), tokenData.getInt("id"))) {
+            JSONObject board = Board.getData(board_id.getIntValue());
+            if (board.isEmpty()) {
+                return new ResponseObject(false, "Board does not exist !");
+            } else {
+                JSONArray lists = Board.getAllListsData(board_id.getIntValue());
+                board.put("lists", lists);
+                return new ResponseObject(true, "Request successful !", new JSONObject().put("board", board));
+            }
+        } else {
+            return new ResponseObject(false, "You are not part of the team !");
+        }
+    };
 }

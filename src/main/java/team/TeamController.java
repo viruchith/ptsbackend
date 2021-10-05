@@ -174,17 +174,17 @@ public class TeamController {
             return new ResponseObject(false, new JSONObject().put("message", "Invalid data !").put("errors", errors));
         }
 
-        Team team = Team.getTeamById(Integer.parseInt(team_id.getValue()));
+        JSONObject team = Team.getInfo(Integer.parseInt(team_id.getValue()));
 
-        if (team == null) {
+        if (team == null || team.isEmpty()) {
             return new ResponseObject(false, "Invalid Team Id !");
         }
         // Only owner can delete the member
-        if (team.getOwner_id() != tokenData.getInt("id")) {
+        if (team.getInt("owner_id") != tokenData.getInt("id")) {
             return new ResponseObject(false, "Unauthorized Action !");
         }
 
-        if (username.equals(tokenData.getString("username"))) {
+        if (username.equals(team.getString("owner_username"))) {
             return new ResponseObject(false, "Team Owner Cannot be deleted !");
         }
 

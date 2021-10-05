@@ -31,7 +31,7 @@ public class TableGenerator {
                 // Boards Table
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `pts`.`boards` ( `id` INT NOT NULL AUTO_INCREMENT, `team_id` INT NOT NULL, `title` VARCHAR(50) NOT NULL, `description` VARCHAR(256) NOT NULL, `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(), PRIMARY KEY (`id`), INDEX `boards_team_fkey_idx` (`team_id` ASC) VISIBLE, CONSTRAINT `boards_team_fkey` FOREIGN KEY (`team_id`) REFERENCES `pts`.`teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)");
                 // Lists Table
-                stmt.addBatch("CREATE TABLE IF NOT EXISTS `pts`.`lists` ( `id` INT NOT NULL AUTO_INCREMENT, `board_id` INT NOT NULL, `title` VARCHAR(50) NOT NULL, `tasks` MEDIUMTEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NOT NULL, PRIMARY KEY (`id`), INDEX `board_fkey_idx` (`board_id` ASC) VISIBLE, CONSTRAINT `board_fkey` FOREIGN KEY (`board_id`) REFERENCES `pts`.`boards` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)");
+                stmt.addBatch("CREATE TABLE IF NOT EXISTS `lists` ( `id` int(11) NOT NULL AUTO_INCREMENT, `board_id` int(11) NOT NULL, `title` varchar(50) NOT NULL, `tasks` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), KEY `board_fkey_idx` (`board_id`), CONSTRAINT `board_fkey` FOREIGN KEY (`board_id`) REFERENCES `boards` (`id`) ON DELETE CASCADE ON UPDATE CASCADE )");
                 stmt.executeBatch();
                 stmt.clearBatch();
                 stmt.closeOnCompletion();

@@ -232,5 +232,9 @@ public class Validator{
     public String getValue() {
         return value;
     }
+
+    public int getIntValue() throws NumberFormatException {
+        return Integer.parseInt(this.value);
+    }
 }
 

@@ -3,14 +3,14 @@ package helpers;
 import java.sql.*;
 
 public class DBQueryHelper {
-    private static Connection getConnection(){
-        try{
+    public static Connection getConnection() {
+        try {
             Connection conn = DriverManager.getConnection(Constants.DB_CONNECTION_URL);
             conn.setAutoCommit(true);
             return conn;
-        }catch(SQLTimeoutException e){
+        } catch (SQLTimeoutException e) {
             e.printStackTrace();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
