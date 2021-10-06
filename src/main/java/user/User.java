@@ -225,11 +225,11 @@ public class User {
     public static JSONArray getAllBoards(int user_id) {
         JSONArray boards = new JSONArray();
         try {
-            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT * FROM pts.boards WHERE team_id IN (SELECT team_id FROM pts.team_members WHERE user_id = ?)");
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT pts.boards.id,pts.boards.team_id,pts.boards.title,pts.boards.description,pts.boards.created_at,pts.teams.title AS team_title FROM pts.boards INNER JOIN pts.teams ON pts.boards.team_id = pts.teams.id WHERE team_id IN (SELECT team_id FROM pts.team_members WHERE user_id = ?)");
             stmt.setInt(1, user_id);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                boards.put(new Board(rs.getInt("id"), rs.getInt("team_id"), rs.getString("title"), rs.getString("description"), rs.getString("created_at")).getJsonObject());
+                boards.put(new Board(rs.getInt("id"), rs.getInt("team_id"), rs.getString("title"), rs.getString("description"), rs.getString("created_at"), rs.getString("team_title")).getJsonObject());
             }
         } catch (SQLException e) {
             e.printStackTrace();

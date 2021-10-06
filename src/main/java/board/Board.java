@@ -30,6 +30,16 @@ public class Board {
         this.jsonObject = new JSONObject().put("team_id", team_id).put("title", title).put("description", description).put("created_at", created_at);
     }
 
+
+    public Board(int id, int team_id, String title, String description, String created_at, String team_title) {
+        this.id = id;
+        this.team_id = team_id;
+        this.title = title;
+        this.description = description;
+        this.created_at = created_at;
+        this.jsonObject = new JSONObject().put("team_id", team_id).put("title", title).put("description", description).put("created_at", created_at).put("team_title", team_title);
+    }
+
     public static boolean create(int team_id, String title, String description) throws SQLIntegrityConstraintViolationException {
         try {
             PreparedStatement stmt = DBQueryHelper.getConnection().prepareStatement("INSERT INTO `pts`.`boards` (`team_id`, `title`, `description`) VALUES ( ? , ? , ? )", Statement.RETURN_GENERATED_KEYS);
