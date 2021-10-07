@@ -62,7 +62,11 @@ public class Main{
         delete("/team/:team_id/member/:username/delete", "application/json", TeamController.removeTeamMember);
         get("/team/:team_id/member/all", "application/json", TeamController.getTeamMembers);
         get("/team/:team_id/info", TeamController.getTeamInfo);
+        post("/team/:team_id/board/:board_id/task/create", BoardController.createTask);
+        post("/team/:team_id/board/:board_id/task/update", BoardController.updateTask);
         get("/team/:team_id/board/:board_id", BoardController.getBoardData);
+
+
         // TEAM BOARD
         post("/board/create", "application/json", BoardController.create);
         //WEB APP ROUTES

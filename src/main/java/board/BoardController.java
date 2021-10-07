@@ -116,4 +116,148 @@ public class BoardController {
             return new ResponseObject(false, "You are not part of the team !");
         }
     };
+
+    public static Route createTask = (Request req, Response res) -> {
+        res.type("application/json");
+        JSONObject tokenData, taskData, errors;
+        int board_id, team_id;
+        String token = req.headers("Auth-Token");
+        try {
+            board_id = Integer.parseInt(req.params("board_id"));
+            team_id = Integer.parseInt(req.params("team_id"));
+        } catch (NumberFormatException e) {
+            return new ResponseObject(false, "board_id and team_id must be an Integer !");
+        }
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+
+        try {
+            taskData = new JSONObject(req.body());
+        } catch (JSONException e) {
+            return new ResponseObject(false, "Invalid Data format !");
+        }
+
+        if (taskData.isEmpty() || !taskData.has("list_id") || !taskData.has("title") || !taskData.has("description") || !taskData.has("due_date")) {
+            return new ResponseObject(false, "Missing Data !");
+        }
+
+        Validator list_id = new Validator(Integer.toString(taskData.getInt("list_id"))).isInt(),
+                title = new Validator(taskData.getString("title")).isPresent().minLength(2).maxLength(50),
+                description = new Validator(taskData.getString("description")).minLength(5).maxLength(200),
+                due_date = new Validator(taskData.getString("due_date")).maxLength(25);
+        errors = new JSONObject();
+
+
+        if (!list_id.isValid()) {
+            errors.put("list_id", list_id.getErrorMessages());
+        }
+
+        if (!title.isValid()) {
+            errors.put("title", title.getErrorMessages());
+        }
+
+        if (!description.isValid()) {
+            errors.put("description", description.getErrorMessages());
+        }
+
+        if (!due_date.isValid()) {
+            errors.put("due_date", due_date.getErrorMessages());
+        }
+
+        if (!errors.isEmpty()) {
+            return new ResponseObject(false, "Invalid Data !", new JSONObject().put("errors", errors));
+        }
+
+        if (User.isMemberOfTeam(team_id, tokenData.getInt("id"))) {
+            if (Board.belongsToTeam(board_id, team_id)) {
+                Task.insert(list_id.getIntValue(), new JSONObject().put("title", title.getValue()).put("description", description.getValue()).put("due_date", due_date.getValue()).toString());
+                return new ResponseObject(true, "Task added successfully !");
+            } else {
+                return new ResponseObject(false, "Unauthorized access !");
+            }
+        } else {
+            return new ResponseObject(false, "You are not part of the team !");
+        }
+
+
+    };
+
+    public static Route updateTask = (Request req, Response res) -> {
+        res.type("application/json");
+        JSONObject tokenData, taskData, errors;
+        int board_id, team_id;
+        String token = req.headers("Auth-Token");
+        try {
+            board_id = Integer.parseInt(req.params("board_id"));
+            team_id = Integer.parseInt(req.params("team_id"));
+        } catch (NumberFormatException e) {
+            return new ResponseObject(false, "board_id and team_id must be an Integer !");
+        }
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+
+        try {
+            taskData = new JSONObject(req.body());
+        } catch (JSONException e) {
+            return new ResponseObject(false, "Invalid Data format !");
+        }
+
+        if (taskData.isEmpty() || !taskData.has("id") || !taskData.has("list_id") || !taskData.has("title") || !taskData.has("description") || !taskData.has("due_date") || !taskData.has("is_archived")) {
+            return new ResponseObject(false, "Missing Data !");
+        }
+
+        Validator id = new Validator(Integer.toString(taskData.getInt("id"))).isInt(),
+                list_id = new Validator(Integer.toString(taskData.getInt("list_id"))).isInt(),
+                title = new Validator(taskData.getString("title")).isPresent().minLength(2).maxLength(50),
+                description = new Validator(taskData.getString("description")).minLength(5).maxLength(200),
+                due_date = new Validator(taskData.getString("due_date")).maxLength(25);
+        errors = new JSONObject();
+
+        if (!id.isValid()) {
+            errors.put("id", id.getErrorMessages());
+        }
+        if (!list_id.isValid()) {
+            errors.put("list_id", list_id.getErrorMessages());
+        }
+        if (!title.isValid()) {
+            errors.put("title", title.getErrorMessages());
+        }
+
+        if (!description.isValid()) {
+            errors.put("description", description.getErrorMessages());
+        }
+
+        if (!due_date.isValid()) {
+            errors.put("due_date", due_date.getErrorMessages());
+        }
+
+        if (!errors.isEmpty()) {
+            return new ResponseObject(false, "Invalid Data !", new JSONObject().put("errors", errors));
+        }
+
+        if (User.isMemberOfTeam(team_id, tokenData.getInt("id"))) {
+            if (Board.belongsToTeam(board_id, team_id)) {
+                Task.update(id.getIntValue(), list_id.getIntValue(), new JSONObject().put("title", title.getValue()).put("description", description.getValue()).put("due_date", due_date.getValue()).toString(), taskData.getBoolean("is_archived"));
+                return new ResponseObject(true, "Task updated successfully !");
+            } else {
+                return new ResponseObject(false, "Unauthorized access !");
+            }
+        } else {
+            return new ResponseObject(false, "You are not part of the team !");
+        }
+    };
 }
