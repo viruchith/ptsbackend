@@ -1,7 +1,12 @@
 package board;
 
+import helpers.DBQueryHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class List {
     private int id, board_id;
@@ -23,6 +28,22 @@ public class List {
         this.created_at = created_at;
         this.tasksJSONArray = new JSONArray(tasks);
         this.jsonObject = new JSONObject().put("id", id).put("title", title).put("tasks", this.tasksJSONArray).put("created_at", created_at);
+    }
+
+    public static boolean belongsToBoard(int id, int board_id) {
+        boolean belongsTo = false;
+        try {
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT * FROM `pts`.`lists` WHERE board_id = ? AND id = ?");
+            stmt.setInt(1, board_id);
+            stmt.setInt(2, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                belongsTo = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return belongsTo;
     }
 
     public JSONObject getJSONObject() {

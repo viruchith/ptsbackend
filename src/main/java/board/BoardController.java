@@ -220,6 +220,7 @@ public class BoardController {
             return new ResponseObject(false, "Missing Data !");
         }
 
+
         Validator id = new Validator(Integer.toString(taskData.getInt("id"))).isInt(),
                 list_id = new Validator(Integer.toString(taskData.getInt("list_id"))).isInt(),
                 title = new Validator(taskData.getString("title")).isPresent().minLength(2).maxLength(50),
@@ -251,13 +252,18 @@ public class BoardController {
 
         if (User.isMemberOfTeam(team_id, tokenData.getInt("id"))) {
             if (Board.belongsToTeam(board_id, team_id)) {
-                Task.update(id.getIntValue(), list_id.getIntValue(), new JSONObject().put("title", title.getValue()).put("description", description.getValue()).put("due_date", due_date.getValue()).toString(), taskData.getBoolean("is_archived"));
-                return new ResponseObject(true, "Task updated successfully !");
+                if (List.belongsToBoard(list_id.getIntValue(), board_id)) {
+                    Task.update(id.getIntValue(), list_id.getIntValue(), new JSONObject().put("title", title.getValue()).put("description", description.getValue()).put("due_date", due_date.getValue()).toString(), (taskData.getInt("is_archived") == 1));
+                    return new ResponseObject(true, "Task updated successfully !");
+                } else {
+                    return new ResponseObject(false, "List id is invalid !");
+                }
             } else {
                 return new ResponseObject(false, "Unauthorized access !");
             }
         } else {
             return new ResponseObject(false, "You are not part of the team !");
         }
+
     };
 }
