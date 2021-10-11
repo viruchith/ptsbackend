@@ -54,6 +54,7 @@ public class Main{
         post("/user/update", "application/json", UserController.updateUserAccountDetails);
         get("/user/:username/info", UserController.getPublicUserInfo);
         get("/user/:username/passwordhint", "application/json", UserController.getUserPasswordHint);
+        get("/user/search/:username", UserController.searchUsers);
         get("/user/teams", "application/json", UserController.getUserTeamsInfo);
         get("/user/boards", "application/json", UserController.getAllUserBoards);
         get("/user/bugtrackers", "application/json", UserController.getAllUserBugTrackers);

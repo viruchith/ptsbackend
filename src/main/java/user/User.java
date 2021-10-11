@@ -222,6 +222,22 @@ public class User {
         return false;
     }
 
+    public static JSONArray search(String username) {
+        JSONArray usernames = new JSONArray();
+        try {
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT `pts`.`users`.`username` FROM `pts`.`users` WHERE `pts`.`users`.`username` LIKE ? ORDER BY `pts`.`users`.`username` LIMIT 20 ");
+            stmt.setString(1, "%" + username + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                usernames.put(rs.getString("username"));
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usernames;
+    }
+
 
     public static JSONArray getAllBoards(int user_id) {
         JSONArray boards = new JSONArray();

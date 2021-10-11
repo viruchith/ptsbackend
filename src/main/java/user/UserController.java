@@ -333,6 +333,31 @@ public class UserController {
 
     };
 
+    public static Route searchUsers = (Request req, Response res) -> {
+        res.type("application/json");
+
+        JSONObject tokenData;
+
+        String username = req.params("username");
+
+        String token = req.headers("Auth-Token");
+
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+
+        JSONArray users = User.search(username);
+
+        return new ResponseObject(true, "Request successful !", new JSONObject().put("users", users));
+
+    };
+
     public static Route getUserTeamsInfo = (Request req, Response res) -> {
         res.type("application/json");
 
