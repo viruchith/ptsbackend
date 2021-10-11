@@ -1,6 +1,7 @@
 import static spark.Spark.*;
 
 import board.BoardController;
+import bugtracker.BugTrackerController;
 import team.TeamController;
 import user.UserController;
 import helpers.TableGenerator;
@@ -55,6 +56,7 @@ public class Main{
         get("/user/:username/passwordhint", "application/json", UserController.getUserPasswordHint);
         get("/user/teams", "application/json", UserController.getUserTeamsInfo);
         get("/user/boards", "application/json", UserController.getAllUserBoards);
+        get("/user/bugtrackers", "application/json", UserController.getAllUserBugTrackers);
 
         // TEAM ROUTES
         post("/team/create", "application/json", TeamController.createTeam);
@@ -62,13 +64,21 @@ public class Main{
         delete("/team/:team_id/member/:username/delete", "application/json", TeamController.removeTeamMember);
         get("/team/:team_id/member/all", "application/json", TeamController.getTeamMembers);
         get("/team/:team_id/info", TeamController.getTeamInfo);
-        post("/team/:team_id/board/:board_id/task/create", BoardController.createTask);
-        post("/team/:team_id/board/:board_id/task/update", BoardController.updateTask);
-        get("/team/:team_id/board/:board_id", BoardController.getBoardData);
 
 
         // TEAM BOARD
+        post("/team/:team_id/board/:board_id/task/create", BoardController.createTask);
+        post("/team/:team_id/board/:board_id/task/update", BoardController.updateTask);
+        get("/team/:team_id/board/:board_id", BoardController.getBoardData);
         post("/board/create", "application/json", BoardController.create);
+
+        //TEAM BUGTRACKER
+        get("/team/:team_id/bugtracker/:bugtracker_id", BugTrackerController.getAllBugs);
+        post("/team/:team_id/bugtracker/:bugtracker_id/bug/create", BugTrackerController.createBug);
+        post("/team/:team_id/bugtracker/:bugtracker_id/bug/update", BugTrackerController.updateBug);
+        post("/bugtracker/create", BugTrackerController.createBugtracker);
+
+
         //WEB APP ROUTES
         get("/", IndexWebController.indexPageHandler);//WEB INDEX
         get("/app/login", UserWebController.getLoginPage);

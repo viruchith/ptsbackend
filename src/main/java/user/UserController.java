@@ -377,5 +377,25 @@ public class UserController {
         return new ResponseObject(true, "Request successful", new JSONObject().put("boards", boards));
     };
 
+    public static Route getAllUserBugTrackers = (Request req, Response res) -> {
+        res.type("application/json");
+
+        JSONObject tokenData;
+
+        String token = req.headers("Auth-Token");
+
+        if (token == null) {
+            return new ResponseObject(false, "Missing Auth Token !");
+        }
+
+        tokenData = Authenticator.verifyToken(token);
+
+        if (tokenData == null) {
+            return new ResponseObject(false, "Invalid Token !");
+        }
+        JSONArray bugtrackers = User.getAllBugTrackers(tokenData.getInt("id"));
+
+        return new ResponseObject(true, "Request successful", new JSONObject().put("bugtrackers", bugtrackers));
+    };
 
 }

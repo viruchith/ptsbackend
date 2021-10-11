@@ -15,4 +15,8 @@ public class Constants {
     public static class List {
         public static String[] LIST_TITLES = {"Backlog", "TODO", "Doing", "Done"};
     }
+
+    public static class Bug {
+        public static final int SEVERITY_LEVEL_CRITICAL = 0, SEVERITY_LEVEL_MAJOR = 1, SEVERITY_LEVEL_MODERATE = 2, SEVERITY_LEVEL_LOW = 3;
+    }
 }

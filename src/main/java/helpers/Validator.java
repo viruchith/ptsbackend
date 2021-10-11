@@ -1,5 +1,7 @@
 package helpers;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -223,6 +225,15 @@ public class Validator{
             this.errorMessages.add(message);
         }
         return this;
+    }
+
+    public static boolean jsonObjectHasKeys(JSONObject jsonObject, String[] keys) {
+        for (String key : keys) {
+            if (!jsonObject.has(key)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public ArrayList<String> getErrorMessages() {

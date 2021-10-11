@@ -1,6 +1,7 @@
 package user;
 
 import board.Board;
+import bugtracker.BugTracker;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -235,6 +236,22 @@ public class User {
             e.printStackTrace();
         }
         return boards;
+    }
+
+    public static JSONArray getAllBugTrackers(int user_id) {
+        JSONArray bugtrackers = new JSONArray();
+        try {
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT `pts`.`bugtrackers`.id , `pts`.`bugtrackers`. team_id,`pts`.`bugtrackers`.title,`pts`.`bugtrackers`.description,`pts`.`bugtrackers`.created_at,`pts`.`teams`.owner_id AS team_owner_id,`pts`.`teams`.title AS team_title FROM pts.bugtrackers INNER JOIN pts.teams ON `pts`.`bugtrackers`.team_id = `pts`.`teams`.id WHERE `pts`.`bugtrackers`.team_id IN ( SELECT team_id FROM `pts`.`team_members` WHERE `pts`.`team_members`.user_id = ? )  ORDER BY `pts`.`bugtrackers`.created_at DESC ");
+            stmt.setInt(1, user_id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                bugtrackers.put(new BugTracker(rs.getInt("id"), rs.getInt("team_id"), rs.getString("title"), rs.getString("description"), rs.getString("created_at"), new JSONObject().put("id", rs.getInt("team_id")).put("owner_id", rs.getInt("team_owner_id")).put("title", rs.getString("team_title"))).getJsonObject());
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bugtrackers;
     }
 
     public int getId() {
