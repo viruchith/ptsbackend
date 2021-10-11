@@ -75,7 +75,7 @@ public class BugTracker {
     public static JSONArray getAllBugs(int bugtracker_id) {
         JSONArray bugs = new JSONArray();
         try {
-            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT `bugs`.`id`, `bugs`.`bugtracker_id`, `bugs`.`title`, `bugs`.`description`, `bugs`.`severity_level`, `bugs`.`is_closed`, `bugs`.`created_at` FROM `pts`.`bugs` WHERE `bugs`.`bugtracker_id` = ? ORDER BY `bugs`.`created_at` DESC ");
+            PreparedStatement stmt = DBQueryHelper.getPreparedStatement("SELECT `bugs`.`id`, `bugs`.`bugtracker_id`, `bugs`.`title`, `bugs`.`description`, `bugs`.`severity_level`, `bugs`.`is_closed`, `bugs`.`created_at` FROM `pts`.`bugs` WHERE `bugs`.`bugtracker_id` = ? ORDER BY `bugs`.`severity_level` ASC ");
             stmt.setInt(1, bugtracker_id);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
