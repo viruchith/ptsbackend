@@ -1,30 +1,160 @@
-<form method="post" action="/user/login" id="login-form">
-    <label>
-        Username :
-    </label>
-    <input name="username" required />
-    <label>
-        Password :
-    </label>
-    <input name = "password" required/>
-    <button type="submit">Log In</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <title>Login</title>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="inner-box" id="card">
+            <div class="card-front">
+                <h2>LOGIN</h2>
+                <form id="login-form" method="POST">
+                    <input
+                            type="text"
+                            class="input-box"
+                            placeholder="Username"
+                            required
+                            minlength="5"
+                            maxlength="15"
+                            id="login-username"
+                            name="username"
+                    />
+                    <br/>
+
+                    <input
+                            type="password"
+                            class="input-box"
+                            placeholder="Password"
+                            required
+                            minlength="8"
+                            id="password"
+                            name="password"
+                    />
+                    <button type="submit" class="submit-btn" id="login-btn">
+                        Login
+                    </button>
+                </form>
+                <button
+                        type="button"
+                        class="btn"
+                        onClick="openRegister()"
+                >
+                    I'm New Here
+                </button>
+                <Link to="/forget">
+                Forgot Password</Link>
+            </div>
+            <div class="card-back">
+                <h2>SIGNUP</h2>
+                <form>
+                    <input
+                            type="text"
+                            class="input-box"
+                            placeholder="Username"
+                            required
+
+                            id="signup-username"
+                            name="username"
+                    />
+                    <input
+                            type="text"
+                            class="input-box"
+                            placeholder="name"
+                            required
+
+                            id="name"
+                            name="name"
+                    />
+                    <input
+                            type="email"
+                            class="input-box"
+                            placeholder="e-mail"
+                            required
+
+
+                            id="email"
+                            name="email"
+                    />
+                    <input
+                            type="password"
+                            class="input-box"
+                            placeholder="Password"
+                            required
+
+                            id="password"
+                            name="password"
+                    />
+                    <input
+                            type="text"
+                            class="input-box"
+                            placeholder="Password hint"
+                            required
+
+                            id="password_hint"
+                            name="password_hint"
+                    />
+                    <button type="submit" class="submit-btn">
+                        SignUp
+                    </button>
+                </form>
+                <button type="button" class="btn" onclick="openLogin()">
+                    I've an account
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
-    const loginForm = document.getElementById("login-form");
-    loginForm.addEventListener("submit",async (e)=>{
-        e.preventDefault();
-        const formData = new FormData(loginForm);
-        const loginData = {
-        username:formData.get("username"),
-        password:formData.get("password")
-        };
+          var card = document.getElementById("card");
+function openRegister(){
+    card.style.transform = "rotateY(-180deg)";
 
-        const res = await fetch("/app/login",{
-            method:"POST",
-            body:JSON.stringify(loginData)
-        });
+}
+function openLogin(){
+    card.style.transform = "rotateY(0deg)";
 
-        console.log(await res.json());
+}
 
-    });
+          const loginForm = document.getElementById("login-form");
+           const loginBtn = document.getElementById("login-btn");
+
+           const signUpForm = document.getElementById("signup-form");
+           const signUpBtn = document.getElementById("signup-btn");
+
+           const loginHandler = async(e)=>{
+            e.preventDefault();
+            loginBtn.disabled = true;
+            const formData = new FormData(e.target);
+            const loginData = {
+                username:formData.get("username"),
+                password:formData.get("password")
+            };
+
+             const  response = await fetch("/app/login",{
+                    method:"POST",
+                    body:JSON.stringify(loginData)
+                    });
+                    loginBtn.disabled = false;
+              const resData = await response.json();
+              if(resData.success){
+                   window.sessionStorage.setItem("username",resData.username);
+                   window.location.reload();
+              }else{
+                alert(resData.message);
+              }
+              loginBtn.disabled = false;
+          };
+          document.addEventListener("DOMContentLoaded",()=>{
+          loginForm.addEventListener("submit",loginHandler);
+          });
+
+
+
 </script>
+</body>
+</html>

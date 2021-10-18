@@ -84,9 +84,9 @@ public class Main{
         get("/", IndexWebController.indexPageHandler);//WEB INDEX
         get("/app/login", UserWebController.getLoginPage);
         post("/app/login", "application/json", UserWebController.loginUser);
+        get("/app/logout", UserWebController.logoutUser);
 
-
-        get("/app/auth/dashboard", UserWebController.getDashboardPage);
+        get("/app/auth/documentation", UserWebController.getDocumentationPage);
 
     }
 }

@@ -18,7 +18,7 @@ public class UserWebController {
           if(isLoggedIn==null){
               return HtmlResponse.getTemplate("login.html");
           }else{
-              res.redirect("/app/auth/dashboard");
+              res.redirect("/app/auth/documentation");
               return "";
           }
 
@@ -58,29 +58,39 @@ public class UserWebController {
         User user = User.getFirstByUsername(username.getValue());
         if(user == null){
             return new ResponseObject(false,"User does not exist !");
-        }else{
+        }else {
 
-            if(PasswordHasher.verifyPassword(password.getValue(),user.getPassword())){
-                HashMap<String,String> tokenMap = new HashMap<String,String>();
-                tokenMap.put("username",user.getUsername());
-                tokenMap.put("id",Integer.toString(user.getId()));
+            if (PasswordHasher.verifyPassword(password.getValue(), user.getPassword())) {
+                HashMap<String, String> tokenMap = new HashMap<String, String>();
+                tokenMap.put("username", user.getUsername());
+                tokenMap.put("id", Integer.toString(user.getId()));
 
                 String token = Authenticator.createToken(tokenMap);
-                resData.put("message","Authenticated successfully !");
-                resData.put("token",token);
+                resData.put("message", "Authenticated successfully !");
+                resData.put("token", token);
+                resData.put("username", user.getUsername());
 
                 req.session(true).attribute("loggedin", true);
                 req.session().attribute("user_id", user.getId());
 
-                return new ResponseObject(true,resData);
-            }else{
-                return new ResponseObject(false,"Incorrect Password !");
+                return new ResponseObject(true, resData);
+            } else {
+                return new ResponseObject(false, "Incorrect Password !");
             }
 
         }
     };
 
-    public static Route getDashboardPage = (Request req,Response res)->{
-        return "DASHBOARD PAGE";
+    public static Route getDocumentationPage = (Request req, Response res) -> {
+        return HtmlResponse.getTemplate("documentation.html");
+    };
+
+    public static Route logoutUser = (Request req, Response res) -> {
+        if ((Boolean) req.session().attribute("loggedin") != null) {
+            req.session().removeAttribute("loggedin");
+        }
+
+        res.redirect("/app/login");
+        return "Redirecting....";
     };
 }

@@ -7,6 +7,6 @@ import webapp.helpers.HtmlResponse;
 
 public class IndexWebController {
     public static Route indexPageHandler = (Request req,Response res)-> {
-        return HtmlResponse.getTemplate("index.html");
+        return HtmlResponse.getTemplate("loading.html");
     };
 }
